@@ -1,60 +1,59 @@
 'use client';
 
-import { trpc } from '@/lib/trpc';
-import { PostCard } from '@/components/blog/post-card';
+import { use } from 'react';
+import { trpc } from '@/lib/client';
 import { Navbar } from '@/components/layout/navbar';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { format } from 'date-fns';
 
-export default function BlogPage() {
-  const [selectedCategory, setSelectedCategory] = useState<number | undefined>();
+export default function PostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = use(params);
+  const { data: post, isLoading } = trpc.post.getBySlug.useQuery({ slug });
 
-  const { data: posts, isLoading: postsLoading } = trpc.post.getAll.useQuery({
-    published: true,
-    categoryId: selectedCategory,
-  });
+  if (isLoading) {
+    return (
+      <>
+        <Navbar />
+        <div className="container mx-auto px-4 py-8">Loading...</div>
+      </>
+    );
+  }
 
-  const { data: categories } = trpc.category.getAll.useQuery();
+  if (!post) {
+    return (
+      <>
+        <Navbar />
+        <div className="container mx-auto px-4 py-8">Post not found</div>
+      </>
+    );
+  }
 
   return (
     <>
       <Navbar />
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold">Blog Posts</h1>
-          
-          {/* Category Filter */}
-          <Select 
-            value={selectedCategory?.toString()} 
-            onValueChange={(value) => setSelectedCategory(value === 'all' ? undefined : Number(value))}
-          >
-            <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Filter by category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              {categories?.map((cat) => (
-                <SelectItem key={cat.id} value={cat.id.toString()}>
-                  {cat.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {postsLoading ? (
-          <p>Loading posts...</p>
-        ) : posts && posts.length > 0 ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((post) => (
-              <PostCard key={post.id} post={post} />
+      <article className="container mx-auto px-4 py-8 max-w-4xl">
+        <header className="mb-8">
+          <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
+          <p className="text-gray-600 mb-4">
+            Published on {format(new Date(post.createdAt), 'MMMM dd, yyyy')}
+          </p>
+          <div className="flex gap-2 flex-wrap">
+            {post.postCategories.map((pc) => (
+              <Badge key={pc.category.id}>
+                {pc.category.name}
+              </Badge>
             ))}
           </div>
-        ) : (
-          <p className="text-center text-gray-500">No posts found</p>
-        )}
-      </div>
+        </header>
+
+        <div className="prose prose-lg max-w-none">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {post.content}
+          </ReactMarkdown>
+        </div>
+      </article>
     </>
   );
 }
