@@ -2,7 +2,15 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+First, Clone the Repo and run npm install
+create a .env file and setup environmental variables
+DATABASE_URL="postgresql://user:password@host:port/dbname?sslmode=require"
+
+Sync the Database Schema - npx drizzle-kit push
+
+Seed the Database - npm run seed
+
+run the development server:
 
 ```bash
 npm run dev
@@ -20,17 +28,37 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+This project leverages a modern, type-safe stack to ensure a robust and maintainable codebase:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Framework: Next.js 15 (with App Router)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Styling: Tailwind CSS with shadcn/ui
 
-## Deploy on Vercel
+API Layer: tRPC
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Database: PostgreSQL (hosted on Neon)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+ORM: Drizzle ORM
+
+Validation: Zod
+
+Language: TypeScript
+
+State Management: Zustand (for client-side state) & TanStack Query (via tRPC for server state)
+
+Content: Markdown with react-markdown
+
+Features Implemented
+
+Blog post CRUD operations (create, read, update, delete)
+● Category CRUD operations
+● Assign one or more categories to posts
+● Blog listing page showing all posts
+● Individual post view page
+● Category filtering on listing page
+
+Time spent - 5 hours
+
+
