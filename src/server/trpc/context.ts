@@ -1,6 +1,7 @@
 import { type FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 
-export async function createContext(opts?: FetchCreateContextFnOptions) {
+// REMOVED: The unused 'opts' parameter from the function definition
+export async function createContext(_opts?: FetchCreateContextFnOptions) {
   return {
     // Add context properties here if needed (e.g., session, user)
   };

@@ -10,12 +10,20 @@ import { MarkdownEditor } from '@/components/editor/markdown-editor';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useEditorStore } from '@/store/useEditorStore';
 import { Checkbox } from '@/components/ui/checkbox';
-import { useRouter } from 'next/navigation';
+// REMOVED: Unused import for useRouter
 import { Badge } from '@/components/ui/badge';
 import { Trash2, Edit } from 'lucide-react';
+// ADDED: Imports to create a specific type for the post object, removing the need for `any`
+import type { AppRouter } from '@/server/trpc/routers/_app';
+import type { inferRouterOutputs } from '@trpc/server';
+
+// ADDED: This creates a precise TypeScript type for a single post based on your tRPC API's output
+type RouterOutput = inferRouterOutputs<AppRouter>;
+type PostWithCategories = RouterOutput['post']['getAll'][0];
+
 
 export default function DashboardPage() {
-  const router = useRouter();
+  // REMOVED: Unused 'router' variable
   const utils = trpc.useUtils();
   
   const { 
@@ -72,12 +80,15 @@ export default function DashboardPage() {
     }
   };
 
-  const handleEdit = (post: any) => {
+  // CHANGED: Replaced the `any` type with the specific `PostWithCategories` type for full type safety
+  const handleEdit = (post: PostWithCategories) => {
     setEditingPostId(post.id);
     setTitle(post.title);
-    setContent(post.content);
+    // CHANGED: Added a check to handle cases where content might be null
+    setContent(post.content || '');
     setIsPublished(post.published);
-    setSelectedCategories(post.postCategories.map((pc: any) => pc.category.id));
+    // CHANGED: The `map` function is now fully typed, removing the need for `any`
+    setSelectedCategories(post.postCategories.map((pc) => pc.category.id));
   };
 
   const handleDelete = (id: number) => {
@@ -219,3 +230,4 @@ export default function DashboardPage() {
     </>
   );
 }
+

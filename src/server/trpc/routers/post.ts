@@ -1,8 +1,10 @@
 import { z } from 'zod';
 import { router, publicProcedure } from '../trpc';
 import { db } from '../../db';
-import { posts, categories, postCategories } from '../../db/schema';
-import { eq, desc, sql, ilike } from 'drizzle-orm';
+// REMOVED: Unused 'categories' import
+import { posts, postCategories } from '../../db/schema';
+// REMOVED: Unused 'sql' and 'ilike' imports
+import { eq, desc } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
 
 // Helper function to generate slug
